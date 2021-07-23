@@ -35,15 +35,12 @@ namespace mock_json.Service
             return reader.ReadToEnd();
         }
 
-
-
         public List<string> GetAllKeys(int paginationSize, int pageNumber)
             => _context.MockData
                 //.Skip(pageNumber * paginationSize)
                 .Take(paginationSize)
                 .Select(x => $"{nameof(x.Key)}: [{x.Key}]   => created at: {x.UpsertAt:dd/MM/yyyy hh:mm}")
                 .ToList();
-
 
         public string GetByKey(string key)
         {
@@ -61,7 +58,6 @@ namespace mock_json.Service
 
         private MockData GetDataByKey(string key)
             => _context.MockData.FirstOrDefault(x => x.Key == key.ToLower());
-
 
         public string Create(string key, JsonElement payload)
         {

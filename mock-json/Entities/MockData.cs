@@ -14,6 +14,7 @@ namespace mock_json.Entities
 
         [Key]
         public string Key { get; private set; }
+
         public string Value { get; private set; }
 
         public DateTime UpsertAt { get; private set; }
@@ -23,6 +24,5 @@ namespace mock_json.Entities
             Value = value;
             UpsertAt = DateTime.UtcNow.AddHours(-3);
         }
-
     }
 }

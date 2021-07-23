@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using mock_json.Data;
 using mock_json.Interfaces;
 using mock_json.RegistrationExtension;
@@ -48,7 +47,6 @@ namespace mock_json
                 await next();
             });
 
-            
             app.AddSwagger();
             app.UseSwaggerUI(c =>
             {

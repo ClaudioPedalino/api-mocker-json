@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.JsonPatch.Operations;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using mock_json.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -19,14 +18,11 @@ namespace mock_json.Controllers
             _mockService = mockService;
         }
 
-
         [HttpGet("test")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [Produces("application/json")]
         public ActionResult Get([FromQuery] string file)
             => Ok(_mockService.GetMockData(file));
-
-
 
         [HttpGet("keys")]
         [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
@@ -40,15 +36,12 @@ namespace mock_json.Controllers
         public ActionResult GetAllKeys([FromQuery] int paginationSize = 50, int pageNumber = 1)
             => Ok(_mockService.GetAllKeys(paginationSize, pageNumber));
 
-
-
         [HttpGet("{key}")]
         public ActionResult GetByKey([FromRoute] string key)
         {
             var response = _mockService.GetByKey(key);
             return Ok(response);
         }
-
 
         [HttpPost("{key}")]
         [Produces("application/json")]
