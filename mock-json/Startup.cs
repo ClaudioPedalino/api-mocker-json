@@ -28,6 +28,7 @@ namespace mock_json
             services.AddDbContext<DataContext>(opt => opt.UseSqlite("Filename=Data.db"));
 
             services.AddTransient<IMockService, MockService>();
+            services.AddMemoryCache();
 
             services.AddSwagger();
         }

@@ -18,11 +18,13 @@ namespace mock_json.Controllers
             _mockService = mockService;
         }
 
+
         [HttpGet("test")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [Produces("application/json")]
         public ActionResult Get([FromQuery] string file)
             => Ok(_mockService.GetMockData(file));
+
 
         [HttpGet("keys")]
         [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
@@ -36,6 +38,7 @@ namespace mock_json.Controllers
         public ActionResult GetAllKeys([FromQuery] int paginationSize = 50, int pageNumber = 1)
             => Ok(_mockService.GetAllKeys(paginationSize, pageNumber));
 
+
         [HttpGet("{key}")]
         public ActionResult GetByKey([FromRoute] string key)
         {
@@ -43,10 +46,11 @@ namespace mock_json.Controllers
             return Ok(response);
         }
 
+
         [HttpPost("{key}")]
         [Produces("application/json")]
         //[ApiExplorerSettings(GroupName = "XYZ - A collection of XYZ APIs")]
-        public ActionResult Create([FromRoute] string key, [FromBody] JsonElement payload)
-            => Ok(_mockService.Create(key, payload));
+        public ActionResult Upsert([FromRoute] string key, [FromBody] JsonElement payload)
+            => Ok(_mockService.Upsert(key, payload));
     }
 }

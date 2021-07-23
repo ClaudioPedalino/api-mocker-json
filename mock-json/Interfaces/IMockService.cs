@@ -11,6 +11,6 @@ namespace mock_json.Interfaces
 
         string GetByKey(string key);
 
-        string Create(string key, JsonElement payload);
+        string Upsert(string key, JsonElement payload);
     }
 }

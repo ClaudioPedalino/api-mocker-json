@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using mock_json.Data;
 using mock_json.Entities;
+using mock_json.Helper;
 using mock_json.Interfaces;
 using Newtonsoft.Json;
 using System;
@@ -15,17 +17,24 @@ namespace mock_json.Service
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
+        private readonly IMemoryCache _cache;
 
-        public MockService(IConfiguration config, DataContext context)
+        public MockService(IConfiguration config, DataContext context, IMemoryCache cache)
         {
             _config = config;
             _context = context;
+            _cache = cache;
         }
+
+        private MockData GetDataByKey(string key)
+            => _context.MockData.FirstOrDefault(x => x.Key == key.ToLower());
+
 
         public string GetMockData(string fileName = default)
             => !string.IsNullOrWhiteSpace(fileName)
                 ? GetJsonFileAsString(fileName, _config)
                 : _config.GetValue<string>("MOCK_RESULT");
+
 
         private static string GetJsonFileAsString(string fileName, IConfiguration _config)
         {
@@ -35,6 +44,7 @@ namespace mock_json.Service
             return reader.ReadToEnd();
         }
 
+
         public List<string> GetAllKeys(int paginationSize, int pageNumber)
             => _context.MockData
                 //.Skip(pageNumber * paginationSize)
@@ -42,24 +52,22 @@ namespace mock_json.Service
                 .Select(x => $"{nameof(x.Key)}: [{x.Key}]   => created at: {x.UpsertAt:dd/MM/yyyy hh:mm}")
                 .ToList();
 
+
         public string GetByKey(string key)
         {
+            var cached = CacheHelper.Get(key);
+            if (!string.IsNullOrWhiteSpace(cached))
+                return cached;
+
             var data = GetDataByKey(key);
-            if (data != null)
-            {
-                var result = JsonConvert.DeserializeObject(data.Value).ToString();
-                return result;
-            }
-            else
-            {
-                return $"no hay data para esa key =>  [{key}]";
-            }
+
+            return data != null
+                ? JsonConvert.DeserializeObject(data.Value).ToString()
+                : $"No hay data para esa key =>  [{key}]";
         }
 
-        private MockData GetDataByKey(string key)
-            => _context.MockData.FirstOrDefault(x => x.Key == key.ToLower());
 
-        public string Create(string key, JsonElement payload)
+        public string Upsert(string key, JsonElement payload)
         {
             var entity = GetDataByKey(key);
             if (entity == null)
@@ -77,6 +85,7 @@ namespace mock_json.Service
             }
             _context.SaveChanges();
 
+            CacheHelper.Set(key, payload.ToString());
             return $"Saved with key =>  [{key}]";
         }
     }
