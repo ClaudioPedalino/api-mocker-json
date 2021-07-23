@@ -14,7 +14,6 @@ namespace mock_json.RegistrationExtension
                 .WriteTo
                 .Console(theme: SystemConsoleTheme.Literate)
                 .CreateLogger();
-
             });
     }
 }
